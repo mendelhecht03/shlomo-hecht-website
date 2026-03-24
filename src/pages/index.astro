@@ -1,0 +1,84 @@
+---
+// This is the code part (above the ---)
+const pageTitle = "Shlomo Hecht Productions";
+---
+
+<!-- This is the HTML part (below the ---) -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{pageTitle}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    
+    header {
+      border-bottom: 2px solid #333;
+      padding-bottom: 20px;
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    
+    nav {
+      margin-top: 20px;
+    }
+    
+    nav a {
+      margin-right: 20px;
+      text-decoration: none;
+      color: #0066cc;
+      font-weight: bold;
+    }
+    
+    nav a:hover {
+      text-decoration: underline;
+    }
+    
+    .hero {
+      background: #f0f0f0;
+      padding: 40px;
+      border-radius: 8px;
+      margin: 40px 0;
+    }
+    
+    .hero h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Shlomo Hecht Productions</h1>
+    <p>Musician | Events & Bookings</p>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/bio">Bio</a>
+      <a href="/events">Past Events</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h2>Welcome</h2>
+      <p>I'm a professional keyboardist available for weddings, corporate events, and private performances.</p>
+      <p><strong>Ready to book?</strong> Check out my <a href="/events">past events</a> or <a href="/contact">contact me</a> for availability.</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026. All rights reserved.</p>
+  </footer>
+</body>
+</html>
