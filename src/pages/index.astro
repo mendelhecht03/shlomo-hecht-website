@@ -1,84 +1,314 @@
 ---
-// This is the code part (above the ---)
-const pageTitle = "Shlomo Hecht Productions";
+import Layout from '../layouts/Layout.astro';
 ---
+<Layout title="Shlomo Hecht — Professional Keyboardist">
 
-<!-- This is the HTML part (below the ---) -->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{pageTitle}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    
-    header {
-      border-bottom: 2px solid #333;
-      padding-bottom: 20px;
-      margin-bottom: 40px;
-    }
-    
-    h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-    
-    nav {
-      margin-top: 20px;
-    }
-    
-    nav a {
-      margin-right: 20px;
-      text-decoration: none;
-      color: #0066cc;
-      font-weight: bold;
-    }
-    
-    nav a:hover {
-      text-decoration: underline;
-    }
-    
-    .hero {
-      background: #f0f0f0;
-      padding: 40px;
-      border-radius: 8px;
-      margin: 40px 0;
-    }
-    
-    .hero h2 {
-      margin-top: 0;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Shlomo Hecht Productions</h1>
-    <p>Musician | Events & Bookings</p>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/bio">Bio</a>
-      <a href="/events">Past Events</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </header>
-
-  <main>
-    <div class="hero">
-      <h2>Welcome</h2>
-      <p>I'm a professional keyboardist available for weddings, corporate events, and private performances.</p>
-      <p><strong>Ready to book?</strong> Check out my <a href="/events">past events</a> or <a href="/contact">contact me</a> for availability.</p>
+  <!-- ░░ HERO ░░ -->
+  <section class="hero">
+    <div class="video-wrap">
+      <video class="hero-vid active" autoplay muted playsinline>
+        <source src="/videos/event1.mp4" type="video/mp4" />
+      </video>
+      <video class="hero-vid" autoplay muted playsinline>
+        <source src="/videos/event2.mp4" type="video/mp4" />
+      </video>
+      <video class="hero-vid" autoplay muted playsinline>
+        <source src="/videos/event3.mp4" type="video/mp4" />
+      </video>
     </div>
-  </main>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Live Performance</p>
+      <h1>Shlomo<br />Hecht</h1>
+      <p class="hero-tagline">
+        Professional keyboardist for weddings,<br />corporate events &amp; private performances
+      </p>
+      <a href="/book" class="btn-gold">Check Availability</a>
+    </div>
+    <div class="scroll-line"><span></span></div>
+  </section>
 
-  <footer>
-    <p>&copy; 2026. All rights reserved.</p>
-  </footer>
-</body>
-</html>
+  <!-- ░░ INTRO ░░ -->
+  <section class="intro">
+    <div class="container intro-grid">
+      <div class="intro-text">
+        <p class="section-label">About</p>
+        <h2>Music that<br /><em>moves people</em></h2>
+        <div class="divider"></div>
+        <p>
+          With years of experience performing at premier events across the country,
+          Shlomo brings an unmatched energy and musicality to every stage.
+          From intimate gatherings to grand celebrations — every performance is crafted to be unforgettable.
+        </p>
+        <a href="/bio" class="btn-gold" style="margin-top:2.25rem">Read Full Bio</a>
+      </div>
+      <div class="intro-stats">
+        <div class="stat">
+          <span class="stat-num">200+</span>
+          <span class="stat-label">Events Performed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">10+</span>
+          <span class="stat-label">Years Experience</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label">Genres Mastered</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ WHATSAPP ░░ -->
+  <section class="wa-section">
+    <div class="container wa-grid">
+      <div class="wa-text">
+        <p class="section-label">Direct Contact</p>
+        <h2>Let's talk about<br />your event</h2>
+        <div class="divider"></div>
+        <p>
+          Have a question or want to discuss a custom performance?
+          Message directly on WhatsApp for a fast, personal response.
+        </p>
+      </div>
+      <a
+        href="https://wa.me/YOURNUMBER?text=Hi%20Shlomo%2C%20I%27d%20like%20to%20inquire%20about%20booking%20you%20for%20an%20event."
+        target="_blank"
+        rel="noopener noreferrer"
+        class="wa-btn"
+      >
+        <!-- WhatsApp icon -->
+        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.845L0 24l6.34-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.372l-.36-.213-3.727.887.885-3.635-.234-.373A9.818 9.818 0 1112 21.818zm5.472-7.436c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        </svg>
+        Message on WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- ░░ BOOK CTA ░░ -->
+  <section class="book-cta">
+    <div class="container book-cta-inner">
+      <p class="section-label">Availability</p>
+      <h2>Ready to book?</h2>
+      <p>View real-time availability and reserve your date in minutes.</p>
+      <a href="/book" class="btn-gold" style="margin-top:2rem">View Calendar &amp; Book</a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── HERO ─────────────────────────────── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 620px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .video-wrap {
+    position: absolute;
+    inset: 0;
+    background: #000;
+  }
+
+  .hero-vid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+  .hero-vid.active { opacity: 1; }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom,
+        rgba(0,0,0,0.25) 0%,
+        rgba(0,0,0,0.5)  50%,
+        rgba(10,10,10,1) 100%
+      );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 1.5rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(4rem, 10vw, 8.5rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    line-height: 0.92;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .hero-tagline {
+    font-size: 0.9rem;
+    color: rgba(240, 237, 232, 0.6);
+    max-width: 400px;
+    margin: 0 auto 2.75rem;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+
+  .scroll-line {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .scroll-line span {
+    display: block;
+    width: 1px;
+    height: 55px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    animation: scrollDrop 2.2s ease infinite;
+  }
+  @keyframes scrollDrop {
+    0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    30%  { opacity: 1; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+  }
+
+  /* ── INTRO ─────────────────────────────── */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .intro-text h2 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+  }
+  .intro-text h2 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .intro-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+    padding-left: 4rem;
+    border-left: 1px solid var(--border);
+  }
+
+  .stat-num {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── WHATSAPP ─────────────────────────── */
+  .wa-section {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .wa-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4rem;
+  }
+  .wa-text h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+  }
+  .wa-text p { max-width: 420px; }
+
+  .wa-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.1rem 2.25rem;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .wa-btn:hover {
+    background: #1ebe5d;
+    transform: translateY(-2px);
+  }
+
+  /* ── BOOK CTA ─────────────────────────── */
+  .book-cta { text-align: center; }
+  .book-cta-inner { display: flex; flex-direction: column; align-items: center; }
+  .book-cta h2 { font-size: clamp(2.2rem, 5vw, 4rem); color: var(--text); }
+  .book-cta p { max-width: 420px; }
+
+  /* ── RESPONSIVE ───────────────────────── */
+  @media (max-width: 820px) {
+    .intro-grid {
+      grid-template-columns: 1fr;
+      gap: 3.5rem;
+    }
+    .intro-stats {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-top: 2.5rem;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .wa-grid {
+      flex-direction: column;
+      text-align: center;
+    }
+    .wa-text .divider { margin: 1.5rem auto; }
+    .wa-text p { max-width: 100%; }
+  }
+</style>
+
+<script>
+  const vids = Array.from(document.querySelectorAll<HTMLVideoElement>('.hero-vid'));
+  if (vids.length > 1) {
+    let idx = 0;
+    setInterval(() => {
+      vids[idx].classList.remove('active');
+      idx = (idx + 1) % vids.length;
+      vids[idx].classList.add('active');
+    }, 8000);
+  }
+</script>

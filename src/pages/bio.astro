@@ -1,86 +1,150 @@
 ---
-const pageTitle = "Bio";
+import Layout from '../layouts/Layout.astro';
 ---
+<Layout title="Bio — Shlomo Hecht">
 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{pageTitle}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    
-    header {
-      border-bottom: 2px solid #333;
-      padding-bottom: 20px;
-      margin-bottom: 40px;
-    }
-    
-    h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-    
-    nav {
-      margin-top: 20px;
-    }
-    
-    nav a {
-      margin-right: 20px;
-      text-decoration: none;
-      color: #0066cc;
-      font-weight: bold;
-    }
-    
-    nav a:hover {
-      text-decoration: underline;
-    }
-    
-    main {
-      max-width: 700px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Alex Keyboards</h1>
-    <p>Professional Keyboardist | Events & Bookings</p>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/bio">Bio</a>
-      <a href="/events">Past Events</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </header>
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-label">The Artist</p>
+      <h1>About Shlomo</h1>
+      <div class="divider"></div>
+    </div>
+  </section>
 
-  <main>
-    <h2>About Me</h2>
-    <p>
-      I'm a professional keyboardist with 10+ years of experience performing at weddings, corporate events, and private functions.
-    </p>
-    <p>
-      Specializing in jazz, classical, and contemporary styles, I bring energy and professionalism to every performance.
-    </p>
-    <p>
-      I'm equipped with a full keyboard rig and can adapt to any venue or event type.
-    </p>
-    <h3>Experience</h3>
-    <ul>
-      <li>100+ events performed</li>
-      <li>Weddings, corporate events, private parties</li>
-      <li>Full technical setup included</li>
-    </ul>
-  </main>
+  <section class="bio-section">
+    <div class="container bio-grid">
+      <div class="bio-body">
+        <p>
+          Shlomo Hecht is a professional musician with extensive experience performing
+          at premier events across the country. Specializing in jazz, classical, and
+          contemporary styles, he brings energy, precision, and warmth to every performance.
+        </p>
+        <p style="margin-top:1.5rem">
+          Equipped with a full professional keyboard rig, Shlomo adapts seamlessly to any
+          venue or event type — from elegant wedding receptions to high-energy corporate galas.
+        </p>
 
-  <footer>
-    <p>&copy; 2026. All rights reserved.</p>
-  </footer>
-</body>
-</html>
+        <h3>What to expect</h3>
+        <ul>
+          <li>Tailored setlists built around your event</li>
+          <li>Professional equipment — no venue logistics to worry about</li>
+          <li>Jazz, classical, pop, and contemporary repertoire</li>
+          <li>Punctual, professional, and easy to work with</li>
+        </ul>
+
+        <h3>Event types</h3>
+        <ul>
+          <li>Weddings &amp; receptions</li>
+          <li>Corporate events &amp; galas</li>
+          <li>Private parties &amp; celebrations</li>
+          <li>Fundraisers &amp; charity events</li>
+        </ul>
+
+        <a href="/book" class="btn-gold" style="margin-top:3rem">Check Availability</a>
+      </div>
+
+      <aside class="bio-aside">
+        <div class="aside-card">
+          <p class="aside-label">Experience</p>
+          <p class="aside-val">10+ Years</p>
+        </div>
+        <div class="aside-card">
+          <p class="aside-label">Events Performed</p>
+          <p class="aside-val">200+</p>
+        </div>
+        <div class="aside-card">
+          <p class="aside-label">Specialties</p>
+          <p class="aside-val">Jazz · Classical · Contemporary</p>
+        </div>
+        <div class="aside-card">
+          <p class="aside-label">Equipment</p>
+          <p class="aside-val">Full professional rig included</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 10rem 0 3rem;
+  }
+  .page-hero h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: var(--text);
+  }
+
+  .bio-section { padding-top: 2rem; }
+
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .bio-body p { font-size: 1rem; line-height: 1.85; }
+
+  .bio-body h3 {
+    font-size: 1.25rem;
+    color: var(--text);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .bio-body ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .bio-body ul li {
+    font-size: 0.9rem;
+    color: rgba(240,237,232,0.65);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .bio-body ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.75rem;
+  }
+
+  .bio-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .aside-card {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .aside-card:last-child { border-bottom: none; }
+
+  .aside-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .aside-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--text) !important;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 820px) {
+    .bio-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    .bio-aside { order: -1; }
+  }
+</style>

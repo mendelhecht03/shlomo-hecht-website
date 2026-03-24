@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Book Shlomo Hecht — Check Availability">
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-label">Availability</p>
+      <h1>Book a Performance</h1>
+      <div class="divider"></div>
+      <p class="page-sub">
+        Select a date and time below. The calendar is synced with Shlomo's live availability —
+        only open slots are bookable.
+      </p>
+    </div>
+  </section>
+
+  <section class="cal-section">
+    <div class="container">
+      <div id="cal-booking"></div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 10rem 0 4rem;
+    text-align: center;
+  }
+  .page-hero h1 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    color: var(--text);
+  }
+  .divider { margin: 1.5rem auto; }
+  .page-sub {
+    max-width: 500px;
+    margin: 0 auto;
+    font-size: 0.92rem;
+  }
+
+  .cal-section {
+    padding-top: 1rem;
+    padding-bottom: 6rem;
+  }
+
+  #cal-booking {
+    width: 100%;
+    min-height: 700px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+</style>
+
+<!--
+  ─────────────────────────────────────────────────────────────────
+  Cal.com inline embed
+  SETUP: Go to https://app.cal.com → create a free account →
+         connect your Google Calendar → copy your username and
+         replace YOUR-CAL-USERNAME below with it.
+  ─────────────────────────────────────────────────────────────────
+-->
+<script type="text/javascript">
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () {
+      let cal = C.Cal;
+      let ar = arguments;
+      if (!cal.loaded) {
+        cal.loaded = true;
+        let t = d.createElement("script");
+        t.async = true;
+        t.src = A;
+        let s = d.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(t, s);
+      }
+      p(cal, ar);
+    };
+  })(window, "https://app.cal.com/embed/embed.js", "init");
+
+  Cal("init", { origin: "https://app.cal.com" });
+
+  Cal("inline", {
+    elementOrSelector: "#cal-booking",
+    calLink: "YOUR-CAL-USERNAME/booking",   // ← replace this
+    layout: "month_view"
+  });
+
+  Cal("ui", {
+    theme: "dark",
+    hideEventTypeDetails: false,
+    layout: "month_view"
+  });
+</script>

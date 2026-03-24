@@ -1,0 +1,215 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = "Shlomo Hecht",
+  description = "Professional keyboardist available for weddings, corporate events, and private performances."
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style is:global>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0a;
+      --surface:  #111111;
+      --border:   #1e1e1e;
+      --text:     #f0ede8;
+      --muted:    #666;
+      --gold:     #c8a96e;
+      --gold-dim: rgba(200, 169, 110, 0.1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      line-height: 1.15;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .btn-gold {
+      display: inline-block;
+      padding: 0.85rem 2.5rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: background 0.25s, color 0.25s;
+      cursor: pointer;
+    }
+    .btn-gold:hover {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    section { padding: 6rem 0; }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.5rem 0;
+    }
+
+    p { color: rgba(240, 237, 232, 0.68); }
+
+    strong { color: var(--text); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <nav id="site-nav">
+    <div class="nav-inner container">
+      <a href="/" class="nav-logo">Shlomo Hecht</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/bio">Bio</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/book" class="nav-book">Book Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <slot />
+
+  <footer>
+    <div class="container footer-inner">
+      <span class="footer-name">Shlomo Hecht</span>
+      <span class="footer-copy">&copy; {new Date().getFullYear()} All rights reserved.</span>
+    </div>
+  </footer>
+
+</body>
+</html>
+
+<style>
+  #site-nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 1.75rem 0;
+    transition: background 0.4s, padding 0.3s, border-color 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  #site-nav.scrolled {
+    background: rgba(10, 10, 10, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 1.1rem 0;
+    border-color: var(--border);
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-book {
+    color: var(--gold) !important;
+    border: 1px solid rgba(200, 169, 110, 0.5);
+    padding: 0.5rem 1.3rem;
+    transition: background 0.2s, color 0.2s, border-color 0.2s !important;
+  }
+  .nav-book:hover {
+    background: var(--gold);
+    color: var(--bg) !important;
+    border-color: var(--gold) !important;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 0;
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
+  .footer-copy {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { gap: 1.5rem; }
+    .footer-inner { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
