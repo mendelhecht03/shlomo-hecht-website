@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(rm -rf src public)",
+      "Bash(cp -r temp-players-club/src .)",
+      "Bash(cp -r temp-players-club/public .)",
+      "Bash(cp temp-players-club/tsconfig.json .)",
+      "Bash(rm -rf temp-players-club node_modules)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
