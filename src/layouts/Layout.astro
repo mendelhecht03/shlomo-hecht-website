@@ -100,8 +100,7 @@ const {
 
   <nav id="site-nav">
     <div class="nav-inner container">
-      <a href="/" class="nav-logo">Shlomo Hecht</a>
-      <ul class="nav-links">
+<ul class="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="/bio">Bio</a></li>
         <li><a href="/events">Events</a></li>
@@ -142,18 +141,11 @@ const {
 
   .nav-inner {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
   }
 
-  .nav-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.35rem;
-    letter-spacing: 0.08em;
-    color: var(--text);
-  }
-
-  .nav-links {
+.nav-links {
     list-style: none;
     display: flex;
     gap: 2.5rem;
@@ -163,10 +155,11 @@ const {
     font-size: 0.72rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--text);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover { color: var(--gold); }
 
   .nav-book {
     color: var(--gold) !important;
