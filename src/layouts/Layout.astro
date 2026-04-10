@@ -22,7 +22,7 @@ const {
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style is:global>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -47,8 +47,8 @@ const {
     }
 
     h1, h2, h3, h4 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
+      font-family: 'Domine', serif;
+      font-weight: 700;
       letter-spacing: 0.03em;
       line-height: 1.15;
     }
@@ -108,7 +108,7 @@ const {
 <ul class="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="/bio">Bio</a></li>
-        <li><a href="/events">Events</a></li>
+        <li><a href="/events">Gallery</a></li>
         <li><a href="/book" class="nav-book">Book Now</a></li>
       </ul>
     </div>
@@ -132,16 +132,11 @@ const {
     top: 0; left: 0;
     width: 100%;
     z-index: 100;
-    padding: 1.75rem 0;
-    transition: background 0.4s, padding 0.3s, border-color 0.4s;
-    border-bottom: 1px solid transparent;
-  }
-  #site-nav.scrolled {
+    padding: 1.1rem 0;
     background: rgba(10, 10, 10, 0.88);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    padding: 1.1rem 0;
-    border-color: var(--border);
+    border-bottom: 1px solid var(--border);
   }
 
   .nav-inner {
@@ -188,7 +183,7 @@ const {
     align-items: center;
   }
   .footer-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 1.05rem;
     letter-spacing: 0.06em;
     color: var(--text);
@@ -205,9 +200,3 @@ const {
   }
 </style>
 
-<script>
-  const nav = document.getElementById('site-nav');
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-</script>
