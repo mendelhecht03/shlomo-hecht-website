@@ -15,9 +15,7 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <title>{title}</title>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=7" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -66,6 +64,7 @@ const {
       padding: 0.85rem 2.5rem;
       border: 1px solid var(--gold);
       color: var(--gold);
+      background: transparent;
       font-family: 'Inter', sans-serif;
       font-size: 0.72rem;
       font-weight: 500;
@@ -105,7 +104,10 @@ const {
 
   <nav id="site-nav">
     <div class="nav-inner container">
-<ul class="nav-links">
+      <a href="/" class="nav-logo">
+        <img src="/shp-logo.svg" alt="SHP" />
+      </a>
+      <ul class="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="/bio">Bio</a></li>
         <li><a href="/events">Gallery</a></li>
@@ -118,7 +120,6 @@ const {
 
   <footer>
     <div class="container footer-inner">
-      <span class="footer-name">Shlomo Hecht</span>
       <span class="footer-copy">&copy; {new Date().getFullYear()} All rights reserved.</span>
     </div>
   </footer>
@@ -141,8 +142,14 @@ const {
 
   .nav-inner {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+  }
+
+  .nav-logo img {
+    height: 38px;
+    width: auto;
+    display: block;
   }
 
 .nav-links {
