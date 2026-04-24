@@ -6,13 +6,13 @@ import Layout from '../layouts/Layout.astro';
   <!-- ░░ HERO ░░ -->
   <section class="hero">
     <div class="video-wrap">
-      <video class="hero-vid active" autoplay muted playsinline>
+      <video class="hero-vid active" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback>
         <source src="/videos/event1.mp4" type="video/mp4" />
       </video>
-      <video class="hero-vid" autoplay muted playsinline>
+      <video class="hero-vid" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback>
         <source src="/videos/event2.mp4" type="video/mp4" />
       </video>
-      <video class="hero-vid" autoplay muted playsinline>
+      <video class="hero-vid" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback>
         <source src="/videos/event3.mp4" type="video/mp4" />
       </video>
     </div>
@@ -110,9 +110,8 @@ import Layout from '../layouts/Layout.astro';
   /* ── HERO ─────────────────────────────── */
   .hero {
     position: relative;
-    height: calc(100vh - 3.5rem);
-    height: calc(100dvh - 3.5rem);
-    margin-top: 3.5rem;
+    height: 100vh;
+    height: 100dvh;
     min-height: 460px;
     overflow: hidden;
     display: flex;
@@ -121,7 +120,12 @@ import Layout from '../layouts/Layout.astro';
     padding: 0;
   }
   @media (min-width: 720px) {
-    .hero { min-height: 620px; }
+    .hero {
+      height: calc(100vh - 3.5rem);
+      height: calc(100dvh - 3.5rem);
+      margin-top: 3.5rem;
+      min-height: 620px;
+    }
   }
 
   .video-wrap {
@@ -138,8 +142,19 @@ import Layout from '../layouts/Layout.astro';
     object-fit: cover;
     opacity: 0;
     transition: opacity 1.4s ease;
+    pointer-events: none;
   }
   .hero-vid.active { opacity: 1; }
+
+  /* Hide iOS Safari's native play button overlay when autoplay is blocked */
+  .hero-vid::-webkit-media-controls,
+  .hero-vid::-webkit-media-controls-start-playback-button,
+  .hero-vid::-webkit-media-controls-panel,
+  .hero-vid::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+    opacity: 0;
+  }
 
   .hero-overlay {
     position: absolute;
@@ -375,6 +390,15 @@ import Layout from '../layouts/Layout.astro';
 
 <script>
   const vids = Array.from(document.querySelectorAll<HTMLVideoElement>('.hero-vid'));
+
+  // Try to start playback on all videos (iOS Low Power Mode blocks autoplay)
+  vids.forEach((v) => {
+    v.muted = true;
+    const attempt = () => v.play().catch(() => {});
+    attempt();
+    document.addEventListener('visibilitychange', attempt, { once: true });
+  });
+
   if (vids.length > 1) {
     let idx = 0;
     setInterval(() => {

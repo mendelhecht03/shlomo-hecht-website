@@ -11,15 +11,22 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <div class="book-btn-wrap">
-      <button class="btn-gold" id="open-modal">Select Date</button>
+      <button class="btn-gold" id="open-modal">Check Availability</button>
     </div>
   </section>
 
-  <div id="booking-modal" class="modal-overlay" hidden>
+  <div
+    id="booking-modal"
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="booking-modal-title"
+    hidden
+  >
     <div class="modal">
-      <button class="modal-close" id="close-modal">✕</button>
+      <button class="modal-close" id="close-modal" aria-label="Close dialog">✕</button>
       <p class="section-label">Request</p>
-      <h2>Check a Time Slot</h2>
+      <h2 id="booking-modal-title">Check a Time Slot</h2>
       <div class="divider"></div>
 
       <form id="booking-form">
@@ -32,7 +39,6 @@ import Layout from '../layouts/Layout.astro';
             <label for="booking-start">From</label>
             <input type="time" id="booking-start" required />
           </div>
-          <div class="time-range-sep">—</div>
           <div class="form-group">
             <label for="booking-end">To</label>
             <input type="time" id="booking-end" required />
@@ -46,26 +52,77 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
-    const API_KEY = 'AIzaSyDLMwBmmwCgog8YZnkF1SbOWY_DFDzTRw';
+    const API_KEY = 'AIzaSyCTWa0iknKI5ldlqRe8sX79yj6yqnUMQmc';
     const CALENDAR_ID = 'shlomohechtmusic@gmail.com';
-    const TIMEZONE = 'America/Los_Angeles';
+    const TIMEZONE = 'America/New_York';
 
     const modal = document.getElementById('booking-modal') as HTMLElement;
-    const openBtn = document.getElementById('open-modal');
-    const closeBtn = document.getElementById('close-modal');
+    const openBtn = document.getElementById('open-modal') as HTMLButtonElement;
+    const closeBtn = document.getElementById('close-modal') as HTMLButtonElement;
     const form = document.getElementById('booking-form') as HTMLFormElement;
     const result = document.getElementById('booking-result') as HTMLElement;
+    const dateInput = document.getElementById('booking-date') as HTMLInputElement;
+    const startInput = document.getElementById('booking-start') as HTMLInputElement;
+    const endInput = document.getElementById('booking-end') as HTMLInputElement;
 
-    openBtn?.addEventListener('click', () => { modal.hidden = false; });
-    closeBtn?.addEventListener('click', () => { modal.hidden = true; result.innerHTML = ''; form.reset(); });
-    modal.addEventListener('click', (e) => { if (e.target === modal) { modal.hidden = true; result.innerHTML = ''; form.reset(); } });
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const toISODate = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+    // Always block past dates (runs client-side so it's correct regardless of build date)
+    const todayISO = toISODate(new Date());
+    dateInput.min = todayISO;
+
+    let lastFocused: HTMLElement | null = null;
+
+    const openModal = () => {
+      lastFocused = document.activeElement as HTMLElement;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+
+      // Pre-fill sensible defaults if empty
+      if (!dateInput.value) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.value = toISODate(tomorrow);
+      }
+      if (!startInput.value) startInput.value = '18:00';
+      if (!endInput.value) endInput.value = '22:00';
+
+      // Move focus into the dialog
+      setTimeout(() => dateInput.focus(), 50);
+    };
+
+    const closeModal = () => {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      result.innerHTML = '';
+      form.reset();
+      lastFocused?.focus();
+    };
+
+    openBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    // Delegated click handler for result-area buttons (Try Another Time)
+    result.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.matches('[data-action="retry"]')) {
+        result.innerHTML = '';
+        startInput.focus();
+      }
+    });
 
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const date = (document.getElementById('booking-date') as HTMLInputElement).value;
-      const start = (document.getElementById('booking-start') as HTMLInputElement).value;
-      const end = (document.getElementById('booking-end') as HTMLInputElement).value;
+      const date = dateInput.value;
+      const start = startInput.value;
+      const end = endInput.value;
 
       const timeMin = new Date(`${date}T${start}`);
       const timeMax = new Date(`${date}T${end}`);
@@ -93,20 +150,41 @@ import Layout from '../layouts/Layout.astro';
         );
 
         const data = await res.json();
-        const busy = data.calendars?.[CALENDAR_ID]?.busy ?? [];
+        console.log('[freeBusy] status:', res.status, 'response:', data);
+
+        if (!res.ok) {
+          const msg = data?.error?.message ?? `HTTP ${res.status}`;
+          result.innerHTML = `<p class="result-error">API error: ${msg}</p>`;
+          return;
+        }
+
+        const calInfo = data.calendars?.[CALENDAR_ID];
+        if (calInfo?.errors && calInfo.errors.length > 0) {
+          const reason = calInfo.errors[0].reason;
+          const friendly = reason === 'notFound'
+            ? 'Calendar not found or not shared publicly.'
+            : `Calendar error: ${reason}`;
+          result.innerHTML = `<p class="result-error">${friendly}</p>`;
+          return;
+        }
+
+        const busy = calInfo?.busy ?? [];
 
         if (busy.length === 0) {
+          const subject = encodeURIComponent(`Booking Request — ${date}`);
+          const body = encodeURIComponent(`Hi Shlomo, I'd like to book you on ${date} from ${start} to ${end}.`);
           result.innerHTML = `
-            <div class="result-available">
+            <div class="result-box result-available">
               <p class="result-title">Available</p>
               <p>That time slot looks open. Reach out to Shlomo to confirm your booking.</p>
-              <a href="mailto:shlomohechtmusic@gmail.com?subject=Booking Request — ${date}&body=Hi Shlomo, I'd like to book you on ${date} from ${start} to ${end}." class="btn-gold" style="margin-top:1.5rem">Email Shlomo</a>
+              <a href="mailto:shlomohechtmusic@gmail.com?subject=${subject}&body=${body}" class="btn-gold result-cta">Email Shlomo</a>
             </div>`;
         } else {
           result.innerHTML = `
-            <div class="result-busy">
+            <div class="result-box result-busy">
               <p class="result-title">Not Available</p>
-              <p>Shlomo is already booked during that time. Please check the calendar for an open date.</p>
+              <p>Shlomo is already booked during that time. Try a different date or time.</p>
+              <button type="button" class="btn-gold result-cta" data-action="retry">Try Another Time</button>
             </div>`;
         }
       } catch {
@@ -196,12 +274,17 @@ import Layout from '../layouts/Layout.astro';
 
   .modal-close {
     position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 1rem;
+    font-size: 1.5rem;
     cursor: pointer;
     line-height: 1;
     transition: color 0.2s;
@@ -209,11 +292,21 @@ import Layout from '../layouts/Layout.astro';
 
   .modal-close:hover { color: var(--text); }
 
+  #booking-form {
+    width: 100%;
+  }
+
+  #booking-form > .btn-gold {
+    display: block;
+    margin: 0 auto;
+  }
+
   .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
     margin-bottom: 1.25rem;
+    min-width: 0;
   }
 
   .form-group label {
@@ -221,18 +314,26 @@ import Layout from '../layouts/Layout.astro';
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold);
+    text-align: left;
   }
 
   .form-group input,
   .form-group select {
+    display: block;
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
     padding: 0.65rem 0.85rem;
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 1rem;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     color-scheme: dark;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .form-group input:focus,
@@ -242,22 +343,29 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .time-range {
-    display: flex;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.75rem;
-  }
-
-  .time-range .form-group { flex: 1; }
-
-  .time-range-sep {
-    color: var(--muted);
-    padding-bottom: 0.75rem;
-    flex-shrink: 0;
   }
 
   #booking-result {
     margin-top: 1.75rem;
   }
+</style>
+
+<!-- Global because result HTML is injected via innerHTML; scoped CSS won't match -->
+<style is:global>
+  .result-box {
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 1.25rem 1.25rem 1.5rem;
+    border-radius: 2px;
+    text-align: center;
+  }
+
+  .result-available { border-left-color: #7ec89a; }
+  .result-busy { border-left-color: #c87e7e; }
 
   .result-title {
     font-family: 'Domine', serif;
@@ -269,6 +377,11 @@ import Layout from '../layouts/Layout.astro';
 
   .result-available .result-title { color: #7ec89a !important; }
   .result-busy .result-title { color: #c87e7e !important; }
+
+  .result-cta {
+    margin-top: 1.25rem;
+  }
+
   .result-checking { color: var(--muted); font-size: 0.9rem; }
   .result-error { color: #c87e7e; font-size: 0.9rem; }
 </style>

@@ -7,6 +7,7 @@ const {
   title = "Shlomo Hecht",
   description = "Professional keyboardist available for weddings, corporate events, and private performances."
 } = Astro.props;
+const isHome = Astro.url.pathname === "/";
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -42,6 +43,10 @@ const {
       font-family: 'Inter', sans-serif;
       font-weight: 300;
       line-height: 1.75;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
     }
 
     h1, h2, h3, h4 {
@@ -110,9 +115,11 @@ const {
 
   <nav id="site-nav">
     <div class="nav-inner container">
-      <a href="/" class="nav-logo">
-        <img src="/shp-logo.svg" alt="SHP" />
-      </a>
+      {isHome && (
+        <a href="/" class="nav-logo">
+          <img src="/shp-logo.svg" alt="SHP" />
+        </a>
+      )}
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-menu">
         <span></span><span></span><span></span>
       </button>
@@ -138,30 +145,36 @@ const {
 
 <style>
   #site-nav {
-    position: fixed;
+    position: absolute;
     top: 0; left: 0;
     width: 100%;
     z-index: 100;
-    padding: 1.1rem 0;
-    background: rgba(10, 10, 10, 0.88);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
+    padding: 0;
+    background: transparent;
+    border-bottom: none;
   }
 
   .nav-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: block;
+    position: relative;
+    min-height: clamp(140px, 32dvh, 310px);
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .nav-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .nav-logo img {
-    height: 34px;
+    height: 110px;
     width: auto;
     display: block;
   }
 
-  /* Hamburger — visible by default (mobile-first) */
+  /* Hamburger — fixed to top-right on mobile so it's always tappable */
   .nav-toggle {
     display: flex;
     flex-direction: column;
@@ -173,6 +186,9 @@ const {
     background: transparent;
     border: none;
     cursor: pointer;
+    position: fixed;
+    top: calc(1.25rem + env(safe-area-inset-top));
+    right: 1.25rem;
     z-index: 102;
   }
   .nav-toggle span {
@@ -243,6 +259,29 @@ const {
 
   /* Desktop — horizontal nav, no hamburger */
   @media (min-width: 720px) {
+    #site-nav {
+      position: fixed;
+      padding: 1.1rem 0;
+      background: rgba(10, 10, 10, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 0;
+      padding-top: 0;
+    }
+
+    .nav-logo {
+      position: static;
+      transform: none;
+    }
+    .nav-logo img { height: 34px; }
+
     .nav-toggle { display: none; }
 
     .nav-links {
@@ -273,6 +312,7 @@ const {
   footer {
     border-top: 1px solid var(--border);
     padding: 2.5rem 0;
+    margin-top: auto;
   }
   .footer-inner {
     display: flex;
