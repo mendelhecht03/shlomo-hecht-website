@@ -41,7 +41,7 @@ import Layout from '../layouts/Layout.astro';
           Equipped with a full professional keyboard rig, Shlomo adapts seamlessly to any
           venue or event type — from elegant wedding receptions to high-energy corporate galas.
         </p>
-        <a href="/book" class="btn-gold" style="margin-top:3rem">Check Availability</a>
+        <div class="bio-cta"><a href="/book" class="btn-gold">Check Availability</a></div>
       </div>
     </div>
   </section>
@@ -50,26 +50,31 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
   .page-hero {
-    padding: 10rem 0 0;
+    padding: 6.5rem 0 0;
   }
   .page-hero h1 {
-    font-size: clamp(3rem, 6vw, 5rem);
+    font-size: clamp(2.25rem, 6vw, 5rem);
     color: var(--text);
+  }
+  @media (min-width: 720px) {
+    .page-hero { padding: 10rem 0 0; }
   }
 
   .hero-photo-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 3rem;
-    margin-top: 2.5rem;
+    gap: 2rem;
+    margin-top: 2rem;
   }
 
   .hero-photo-wrap {
-    width: 260px;
-    height: 260px;
+    width: min(260px, 70vw);
+    aspect-ratio: 1 / 1;
     border: 3px solid var(--gold);
     box-shadow: 0 0 0 6px rgba(200,169,110,0.15);
     overflow: hidden;
+    flex-shrink: 0;
   }
 
   .hero-photo {
@@ -80,7 +85,25 @@ import Layout from '../layouts/Layout.astro';
     display: block;
   }
 
+  @media (min-width: 720px) {
+    .hero-photo-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 3rem;
+      margin-top: 2.5rem;
+    }
+    .hero-photo-wrap {
+      width: 260px;
+      height: 260px;
+    }
+  }
+
   .bio-section { padding-top: 2.5rem; }
+
+  .bio-cta {
+    margin-top: 3rem;
+    text-align: center;
+  }
 
 .bio-body p { font-size: 1rem; line-height: 1.85; }
 
@@ -113,36 +136,51 @@ import Layout from '../layouts/Layout.astro';
 
   .bio-aside {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0;
     border: 1px solid var(--border);
+    width: 100%;
   }
 
   .aside-card {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    padding: 1.25rem;
+    border-right: 1px solid var(--border);
+    flex: 1;
+    text-align: center;
   }
-  .aside-card:last-child { border-bottom: none; }
+  .aside-card:last-child { border-right: none; }
 
   .aside-label {
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--gold);
     margin-bottom: 0.4rem;
   }
   .aside-val {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     color: var(--text) !important;
     line-height: 1.4;
   }
 
-  @media (max-width: 820px) {
-    .bio-grid {
-      grid-template-columns: 1fr;
-      gap: 3rem;
+  @media (min-width: 720px) {
+    .bio-aside {
+      flex-direction: column;
+      width: auto;
     }
-    .bio-aside { order: -1; }
+    .aside-card {
+      padding: 1.5rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      flex: 0 0 auto;
+    }
+    .aside-card:last-child { border-bottom: none; }
+    .aside-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+    }
+    .aside-val { font-size: 1.2rem; }
   }
 </style>

@@ -66,26 +66,34 @@ const events = [
 
 <style>
   .page-hero {
-    padding: 10rem 0 3rem;
+    padding: 6.5rem 0 2rem;
   }
   .page-hero h1 {
-    font-size: clamp(3rem, 6vw, 5rem);
+    font-size: clamp(2.25rem, 6vw, 5rem);
     color: var(--text);
   }
   .page-sub { font-size: 0.9rem; }
+  @media (min-width: 720px) {
+    .page-hero { padding: 10rem 0 3rem; }
+  }
 
-  .events-section { padding-top: 2rem; }
+  .events-section { padding-top: 1rem; }
+  @media (min-width: 720px) {
+    .events-section { padding-top: 2rem; }
+  }
 
   .events-list {
     border-top: 1px solid var(--border);
   }
 
+  /* Mobile-first: two-row layout per event */
   .event-row {
     display: grid;
-    grid-template-columns: 3rem 1fr auto;
-    gap: 2.5rem;
-    align-items: center;
-    padding: 2.5rem 0;
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.6rem 1.25rem;
+    align-items: start;
+    padding: 1.75rem 0;
     border-bottom: 1px solid var(--border);
     transition: background 0.2s;
   }
@@ -105,18 +113,19 @@ const events = [
   }
 
   .event-main h3 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: var(--text);
     margin-bottom: 0.4rem;
   }
   .event-main p { font-size: 0.88rem; }
 
   .event-meta {
+    grid-column: 2;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 0.4rem;
-    text-align: right;
+    text-align: left;
   }
 
   .event-type {
@@ -127,6 +136,7 @@ const events = [
     border: 1px solid rgba(200,169,110,0.3);
     padding: 0.25rem 0.6rem;
     border-radius: 1px;
+    align-self: flex-start;
   }
 
   .event-date,
@@ -136,8 +146,25 @@ const events = [
     letter-spacing: 0.04em;
   }
 
+  @media (min-width: 700px) {
+    .event-row {
+      grid-template-columns: 3rem 1fr auto;
+      grid-template-rows: auto;
+      gap: 2.5rem;
+      align-items: center;
+      padding: 2.5rem 0;
+    }
+    .event-main h3 { font-size: 1.4rem; }
+    .event-meta {
+      grid-column: auto;
+      align-items: flex-end;
+      text-align: right;
+    }
+    .event-type { align-self: flex-end; }
+  }
+
   .events-cta {
-    margin-top: 5rem;
+    margin-top: 3rem;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -146,20 +173,12 @@ const events = [
   }
   .events-cta p {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: var(--text);
     font-style: italic;
   }
-
-  @media (max-width: 700px) {
-    .event-row {
-      grid-template-columns: 2.5rem 1fr;
-      grid-template-rows: auto auto;
-    }
-    .event-meta {
-      grid-column: 2;
-      align-items: flex-start;
-      text-align: left;
-    }
+  @media (min-width: 720px) {
+    .events-cta { margin-top: 5rem; }
+    .events-cta p { font-size: 1.8rem; }
   }
 </style>
