@@ -35,43 +35,39 @@ export default async (req) => {
     });
   }
 
-  try {
-    const googleRes = await fetch(
-      `https://www.googleapis.com/calendar/v3/freeBusy?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeMin,
-          timeMax,
-          timeZone: TIMEZONE,
-          items: [{ id: CALENDAR_ID }],
-        }),
-      }
-    );
+  const url = new URL(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`
+  );
+  url.searchParams.set('key', apiKey);
+  url.searchParams.set('timeMin', timeMin);
+  url.searchParams.set('timeMax', timeMax);
+  url.searchParams.set('timeZone', TIMEZONE);
+  url.searchParams.set('singleEvents', 'true');
+  url.searchParams.set('orderBy', 'startTime');
+  url.searchParams.set('maxResults', '50');
 
+  try {
+    const googleRes = await fetch(url);
     const data = await googleRes.json();
 
     if (!googleRes.ok) {
-      return new Response(
-        JSON.stringify({ error: data?.error?.message ?? `Google API ${googleRes.status}` }),
-        { status: googleRes.status, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const calInfo = data.calendars?.[CALENDAR_ID];
-    if (calInfo?.errors?.length) {
-      const reason = calInfo.errors[0].reason;
+      const reason = data?.error?.errors?.[0]?.reason;
       const message = reason === 'notFound'
-        ? 'Calendar not found or not shared publicly.'
-        : `Calendar error: ${reason}`;
+        ? 'Calendar not found or not shared publicly with event details.'
+        : data?.error?.message ?? `Google API ${googleRes.status}`;
       return new Response(JSON.stringify({ error: message }), {
-        status: 400,
+        status: googleRes.status,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify({ busy: calInfo?.busy ?? [] }), {
+    const events = (data.items ?? []).filter((e) => e.status !== 'cancelled');
+    const busy = events.map((e) => ({
+      start: e.start?.dateTime ?? e.start?.date,
+      end: e.end?.dateTime ?? e.end?.date,
+    }));
+
+    return new Response(JSON.stringify({ busy }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
