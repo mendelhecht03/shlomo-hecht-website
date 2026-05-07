@@ -52,10 +52,6 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
-    const API_KEY = 'AIzaSyCTWa0iknKI5ldlqRe8sX79yj6yqnUMQmc';
-    const CALENDAR_ID = 'shlomohechtmusic@gmail.com';
-    const TIMEZONE = 'America/New_York';
-
     const modal = document.getElementById('booking-modal') as HTMLElement;
     const openBtn = document.getElementById('open-modal') as HTMLButtonElement;
     const closeBtn = document.getElementById('close-modal') as HTMLButtonElement;
@@ -135,40 +131,24 @@ import Layout from '../layouts/Layout.astro';
       result.innerHTML = '<p class="result-checking">Checking availability…</p>';
 
       try {
-        const res = await fetch(
-          `https://www.googleapis.com/calendar/v3/freeBusy?key=${API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              timeMin: timeMin.toISOString(),
-              timeMax: timeMax.toISOString(),
-              timeZone: TIMEZONE,
-              items: [{ id: CALENDAR_ID }],
-            }),
-          }
-        );
+        const res = await fetch('/.netlify/functions/check-availability', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            timeMin: timeMin.toISOString(),
+            timeMax: timeMax.toISOString(),
+          }),
+        });
 
         const data = await res.json();
-        console.log('[freeBusy] status:', res.status, 'response:', data);
 
         if (!res.ok) {
-          const msg = data?.error?.message ?? `HTTP ${res.status}`;
-          result.innerHTML = `<p class="result-error">API error: ${msg}</p>`;
+          const msg = data?.error ?? `HTTP ${res.status}`;
+          result.innerHTML = `<p class="result-error">${msg}</p>`;
           return;
         }
 
-        const calInfo = data.calendars?.[CALENDAR_ID];
-        if (calInfo?.errors && calInfo.errors.length > 0) {
-          const reason = calInfo.errors[0].reason;
-          const friendly = reason === 'notFound'
-            ? 'Calendar not found or not shared publicly.'
-            : `Calendar error: ${reason}`;
-          result.innerHTML = `<p class="result-error">${friendly}</p>`;
-          return;
-        }
-
-        const busy = calInfo?.busy ?? [];
+        const busy = data.busy ?? [];
 
         if (busy.length === 0) {
           const subject = encodeURIComponent(`Booking Request — ${date}`);
