@@ -271,7 +271,9 @@ import Layout from '../layouts/Layout.astro';
     transition: color 0.2s;
   }
 
-  .modal-close:hover { color: var(--text); }
+  @media (hover: hover) {
+    .modal-close:hover { color: var(--text); }
+  }
 
   #booking-form {
     width: 100%;

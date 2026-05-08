@@ -80,8 +80,17 @@ const isHome = Astro.url.pathname === "/";
       text-transform: uppercase;
       transition: background 0.25s, color 0.25s;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(200, 169, 110, 0.3);
+      position: relative;
     }
-    .btn-gold:hover {
+    @media (hover: hover) {
+      .btn-gold:hover {
+        background: var(--gold);
+        color: var(--bg);
+      }
+    }
+    .btn-gold:active {
       background: var(--gold);
       color: var(--bg);
     }
@@ -270,7 +279,9 @@ const isHome = Astro.url.pathname === "/";
     color: var(--text);
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--gold); }
+  @media (hover: hover) {
+    .nav-links a:hover { color: var(--gold); }
+  }
 
   .nav-book {
     display: inline-block;
@@ -280,10 +291,12 @@ const isHome = Astro.url.pathname === "/";
     text-align: center;
     transition: background 0.2s, color 0.2s, border-color 0.2s !important;
   }
-  .nav-book:hover {
-    background: var(--gold);
-    color: var(--bg) !important;
-    border-color: var(--gold) !important;
+  @media (hover: hover) {
+    .nav-book:hover {
+      background: var(--gold);
+      color: var(--bg) !important;
+      border-color: var(--gold) !important;
+    }
   }
 
   /* Desktop — horizontal nav, no hamburger */
@@ -376,9 +389,13 @@ const isHome = Astro.url.pathname === "/";
     transition: color 0.2s ease;
   }
 
-  .social-link:hover,
   .social-link:focus-visible {
     color: var(--gold);
+  }
+  @media (hover: hover) {
+    .social-link:hover {
+      color: var(--gold);
+    }
   }
 
   @media (min-width: 640px) {
