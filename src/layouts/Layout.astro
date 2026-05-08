@@ -122,8 +122,8 @@ const isHome = Astro.url.pathname === "/";
 </head>
 <body>
 
-  <nav id="site-nav">
-    <div class="nav-inner container">
+  <nav id="site-nav" class={isHome ? "is-home" : ""}>
+    <div class:list={["nav-inner", "container", { "has-logo": isHome }]}>
       {isHome && (
         <div class="nav-logo">
           <img src="/shp-logo.png" alt="SHP Productions" />
@@ -180,16 +180,15 @@ const isHome = Astro.url.pathname === "/";
   .nav-inner {
     display: block;
     position: relative;
+    min-height: 0;
+    padding-top: 0;
+  }
+  .nav-inner.has-logo {
     min-height: clamp(200px, 38dvh, 340px);
     padding-top: env(safe-area-inset-top);
     pointer-events: none;
   }
-  .nav-inner .nav-logo,
-  .nav-inner .nav-links {
-    pointer-events: none;
-  }
-  .nav-inner .nav-toggle,
-  .nav-inner .nav-links.open {
+  .nav-inner.has-logo .nav-toggle {
     pointer-events: auto;
   }
 
