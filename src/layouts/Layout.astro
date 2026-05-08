@@ -116,9 +116,9 @@ const isHome = Astro.url.pathname === "/";
   <nav id="site-nav">
     <div class="nav-inner container">
       {isHome && (
-        <a href="/" class="nav-logo">
-          <img src="/shp-logo.svg" alt="SHP" />
-        </a>
+        <div class="nav-logo">
+          <img src="/shp-logo.png" alt="SHP Productions" />
+        </div>
       )}
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-menu">
         <span></span><span></span><span></span>
@@ -171,7 +171,7 @@ const isHome = Astro.url.pathname === "/";
   .nav-inner {
     display: block;
     position: relative;
-    min-height: clamp(140px, 32dvh, 310px);
+    min-height: clamp(200px, 38dvh, 340px);
     padding-top: env(safe-area-inset-top);
   }
 
@@ -183,9 +183,10 @@ const isHome = Astro.url.pathname === "/";
   }
 
   .nav-logo img {
-    height: 110px;
+    height: clamp(140px, 24dvh, 200px);
     width: auto;
     display: block;
+    mix-blend-mode: screen;
   }
 
   /* Hamburger — fixed to top-right on mobile so it's always tappable */
@@ -294,7 +295,7 @@ const isHome = Astro.url.pathname === "/";
       position: static;
       transform: none;
     }
-    .nav-logo img { height: 34px; }
+    .nav-logo img { height: 56px; }
 
     .nav-toggle { display: none; }
 
