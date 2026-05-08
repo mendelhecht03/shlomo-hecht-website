@@ -35,7 +35,7 @@ import Layout from '../layouts/Layout.astro';
         <p class="section-label">About</p>
         <div class="intro-heading-row">
           <h2>Shlomo<br />Hecht</h2>
-          <div class="intro-photo">
+          <div class="intro-photo intro-photo-inline">
             <img src="/shlomo-profile.jpg" alt="Shlomo Hecht" />
           </div>
         </div>
@@ -44,15 +44,18 @@ import Layout from '../layouts/Layout.astro';
           With years of experience performing at simchas around the country,
           Shlomo brings his passion and musicality to every stage.
         </p>
-        <a href="/bio" class="btn-gold" style="margin-top:2.25rem">Read Full Bio</a>
+        <div class="intro-photo intro-photo-block">
+          <img src="/shlomo-profile.jpg" alt="Shlomo Hecht" />
+        </div>
+        <a href="/bio" class="btn-gold" style="margin:2.25rem auto 0;min-width:240px;text-align:center;display:block;width:fit-content">Read Full Bio</a>
       </div>
       <div class="intro-stats">
         <div class="stat">
-          <span class="stat-num">100+</span>
+          <span class="stat-num" data-count-to="100" data-suffix="+">0</span>
           <span class="stat-label">Events Performed</span>
         </div>
         <div class="stat">
-          <span class="stat-num">5+</span>
+          <span class="stat-num" data-count-to="5" data-suffix="+">0</span>
           <span class="stat-label">Years Experience</span>
         </div>
       </div>
@@ -228,6 +231,8 @@ import Layout from '../layouts/Layout.astro';
     grid-template-columns: 1fr;
     gap: 2.5rem;
     align-items: center;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   .intro-text h2 {
@@ -245,15 +250,6 @@ import Layout from '../layouts/Layout.astro';
     flex-wrap: wrap;
   }
 
-  .intro-photo {
-    width: clamp(100px, 22vw, 140px);
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    border: 3px solid var(--gold);
-    box-shadow: 0 0 0 6px rgba(200,169,110,0.15);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
   .intro-photo img {
     width: 100%;
     height: 100%;
@@ -262,18 +258,45 @@ import Layout from '../layouts/Layout.astro';
     display: block;
   }
 
+  /* Inline circular photo: hidden on mobile, visible next to heading on desktop */
+  .intro-photo-inline {
+    display: none;
+    width: clamp(100px, 22vw, 140px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 0 6px rgba(200,169,110,0.15);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* Wide rectangular photo block: shown on mobile below the description */
+  .intro-photo-block {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-top: 1.75rem;
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 0 6px rgba(200,169,110,0.12);
+    overflow: hidden;
+  }
+  .intro-photo-block img { object-position: center 22%; }
+
   @media (min-width: 720px) {
     .intro-heading-row { gap: 2rem; }
-    .intro-photo { width: 150px; }
+    .intro-photo-inline { display: block; width: 150px; }
+    .intro-photo-block { display: none; }
   }
 
   .intro-stats {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-evenly;
     gap: 2rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border);
+    text-align: center;
   }
 
   .stat-num {
@@ -295,6 +318,8 @@ import Layout from '../layouts/Layout.astro';
     .intro-grid {
       grid-template-columns: 1fr 1fr;
       gap: 6rem;
+      padding-left: 0;
+      padding-right: 0;
     }
     .intro-stats {
       flex-direction: column;
@@ -340,16 +365,17 @@ import Layout from '../layouts/Layout.astro';
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    padding: 1rem 1.75rem;
+    padding: 0.85rem 2.5rem;
     border: 1px solid var(--gold);
     color: var(--gold);
+    background: transparent;
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     font-weight: 500;
-    letter-spacing: 0.04em;
-    border-radius: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     white-space: nowrap;
-    transition: background 0.2s, color 0.2s, transform 0.2s;
+    transition: background 0.25s, color 0.25s, transform 0.2s;
   }
   .wa-btn:hover,
   .email-btn:hover {
@@ -377,7 +403,7 @@ import Layout from '../layouts/Layout.astro';
     }
     .wa-btn,
     .email-btn {
-      padding: 1.1rem 2.25rem;
+      padding: 0.95rem 2.75rem;
     }
   }
 
@@ -407,4 +433,40 @@ import Layout from '../layouts/Layout.astro';
       vids[idx].classList.add('active');
     }, 8000);
   }
+
+  // Count-up animation for stats when they scroll into view
+  const statNums = document.querySelectorAll<HTMLElement>('.stat-num[data-count-to]');
+  const totalDuration = (() => {
+    let max = 0;
+    statNums.forEach((el) => {
+      const t = parseInt(el.dataset.countTo || '0', 10);
+      if (t > max) max = t;
+    });
+    return max * 35;
+  })();
+  const animateCount = (el: HTMLElement) => {
+    const target = parseInt(el.dataset.countTo || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const msPerStep = totalDuration / target;
+    let current = 0;
+    const tick = () => {
+      current++;
+      if (current >= target) {
+        el.textContent = target + suffix;
+      } else {
+        el.textContent = String(current);
+        setTimeout(tick, msPerStep);
+      }
+    };
+    setTimeout(tick, msPerStep);
+  };
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        animateCount(entry.target as HTMLElement);
+        statObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  statNums.forEach((el) => statObserver.observe(el));
 </script>

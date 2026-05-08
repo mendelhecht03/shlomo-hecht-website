@@ -35,25 +35,26 @@ export default async (req) => {
     });
   }
 
-  const url = new URL(
-    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events`
-  );
+  const url = new URL('https://www.googleapis.com/calendar/v3/freeBusy');
   url.searchParams.set('key', apiKey);
-  url.searchParams.set('timeMin', timeMin);
-  url.searchParams.set('timeMax', timeMax);
-  url.searchParams.set('timeZone', TIMEZONE);
-  url.searchParams.set('singleEvents', 'true');
-  url.searchParams.set('orderBy', 'startTime');
-  url.searchParams.set('maxResults', '50');
 
   try {
-    const googleRes = await fetch(url);
+    const googleRes = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        timeMin,
+        timeMax,
+        timeZone: TIMEZONE,
+        items: [{ id: CALENDAR_ID }],
+      }),
+    });
     const data = await googleRes.json();
 
     if (!googleRes.ok) {
       const reason = data?.error?.errors?.[0]?.reason;
       const message = reason === 'notFound'
-        ? 'Calendar not found or not shared publicly with event details.'
+        ? 'Calendar not found or not shared publicly.'
         : data?.error?.message ?? `Google API ${googleRes.status}`;
       return new Response(JSON.stringify({ error: message }), {
         status: googleRes.status,
@@ -61,11 +62,16 @@ export default async (req) => {
       });
     }
 
-    const events = (data.items ?? []).filter((e) => e.status !== 'cancelled');
-    const busy = events.map((e) => ({
-      start: e.start?.dateTime ?? e.start?.date,
-      end: e.end?.dateTime ?? e.end?.date,
-    }));
+    const calendarData = data?.calendars?.[CALENDAR_ID];
+    if (calendarData?.errors?.length) {
+      const calErr = calendarData.errors[0];
+      return new Response(JSON.stringify({ error: calErr.reason ?? 'Calendar access error' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const busy = calendarData?.busy ?? [];
 
     return new Response(JSON.stringify({ busy }), {
       status: 200,

@@ -12,16 +12,6 @@ import Layout from '../layouts/Layout.astro';
         <div class="hero-photo-wrap">
           <img src="/keyboardist.jpg" alt="Shlomo Hecht" class="hero-photo" />
         </div>
-        <aside class="bio-aside">
-          <div class="aside-card">
-            <p class="aside-label">Experience</p>
-            <p class="aside-val">5+ Years</p>
-          </div>
-          <div class="aside-card">
-            <p class="aside-label">Events Performed</p>
-            <p class="aside-val">100+</p>
-          </div>
-        </aside>
       </div>
     </div>
   </section>
@@ -134,53 +124,4 @@ import Layout from '../layouts/Layout.astro';
     font-size: 0.75rem;
   }
 
-  .bio-aside {
-    display: flex;
-    flex-direction: row;
-    gap: 0;
-    border: 1px solid var(--border);
-    width: 100%;
-  }
-
-  .aside-card {
-    padding: 1.25rem;
-    border-right: 1px solid var(--border);
-    flex: 1;
-    text-align: center;
-  }
-  .aside-card:last-child { border-right: none; }
-
-  .aside-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.4rem;
-  }
-  .aside-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    color: var(--text) !important;
-    line-height: 1.4;
-  }
-
-  @media (min-width: 720px) {
-    .bio-aside {
-      flex-direction: column;
-      width: auto;
-    }
-    .aside-card {
-      padding: 1.5rem;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      flex: 0 0 auto;
-    }
-    .aside-card:last-child { border-bottom: none; }
-    .aside-label {
-      font-size: 0.68rem;
-      letter-spacing: 0.2em;
-    }
-    .aside-val { font-size: 1.2rem; }
-  }
 </style>
