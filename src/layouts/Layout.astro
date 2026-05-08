@@ -175,8 +175,12 @@ const isHome = Astro.url.pathname === "/";
     padding-top: env(safe-area-inset-top);
     pointer-events: none;
   }
-  .nav-inner .nav-toggle,
+  .nav-inner .nav-logo,
   .nav-inner .nav-links {
+    pointer-events: none;
+  }
+  .nav-inner .nav-toggle,
+  .nav-inner .nav-links.open {
     pointer-events: auto;
   }
 
