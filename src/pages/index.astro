@@ -187,33 +187,35 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 1.25rem;
   }
 
-  /* Mobile-only: lift eyebrow into the gap between SHP logo and h1,
-     and drop the button toward the scroll-line indicator.
-     Children are anchored to .hero (not .hero-content) so the
-     top/bottom values are measured from the full viewport hero. */
+  /* Mobile-only hero layout:
+     - Flex column starting just below the SHP logo.
+     - Auto margins above & below the eyebrow center it in the gap
+       between the logo and the h1.
+     - Auto margin above the button pushes it down near the scroll-line. */
   @media (max-width: 719px) {
+    .hero {
+      align-items: stretch;
+    }
     .hero-content {
-      position: static;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding-top: clamp(180px, 31dvh, 280px);
+      padding-bottom: 5.5rem;
     }
     .hero-eyebrow {
-      position: absolute;
-      /* Nav logo bottom sits at ~31dvh, h1 top at ~37dvh — split the difference */
-      top: clamp(195px, 35dvh, 305px);
-      left: 0;
-      right: 0;
-      text-align: center;
-      margin: 0;
-      z-index: 3;
+      margin: auto 0;
     }
-    .hero-content .btn-gold {
-      position: absolute;
-      bottom: 6rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 3;
+    .hero-content h1 {
+      margin-bottom: 1.25rem;
     }
     .hero-tagline {
       margin-bottom: 0;
+    }
+    .hero-content .btn-gold {
+      margin-top: auto;
     }
   }
 
