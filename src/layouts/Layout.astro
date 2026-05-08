@@ -124,11 +124,9 @@ const isHome = Astro.url.pathname === "/";
 
   <nav id="site-nav" class={isHome ? "is-home" : ""}>
     <div class:list={["nav-inner", "container", { "has-logo": isHome }]}>
-      {isHome && (
-        <div class="nav-logo">
-          <img src="/shp-logo.png" alt="SHP Productions" />
-        </div>
-      )}
+      <a href="/" class="nav-logo" aria-label="Home">
+        <img src="/shp-logo.png" alt="SHP Productions" />
+      </a>
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-menu">
         <span></span><span></span><span></span>
       </button>
@@ -188,15 +186,20 @@ const isHome = Astro.url.pathname === "/";
     padding-top: env(safe-area-inset-top);
     pointer-events: none;
   }
-  .nav-inner.has-logo .nav-toggle {
+  .nav-inner.has-logo .nav-toggle,
+  .nav-inner.has-logo .nav-links {
     pointer-events: auto;
   }
 
-  .nav-logo {
+  /* Mobile: logo only shows on home, centered in tall nav */
+  .nav-logo { display: none; }
+  .nav-inner.has-logo .nav-logo {
+    display: block;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    pointer-events: none;
   }
 
   .nav-logo img {
@@ -298,30 +301,41 @@ const isHome = Astro.url.pathname === "/";
     }
   }
 
-  /* Desktop — horizontal nav, no hamburger */
+  /* Desktop — floating "dynamic island" pill nav, no hamburger, no logo */
   @media (min-width: 720px) {
     #site-nav {
       position: fixed;
-      padding: 1.1rem 0;
-      background: rgba(10, 10, 10, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      max-width: calc(100% - 2rem);
+      padding: 0.6rem 1.75rem;
+      background: rgba(10, 10, 10, 0.78);
+      backdrop-filter: blur(18px) saturate(180%);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
     }
 
-    .nav-inner {
+    .nav-inner,
+    .nav-inner.has-logo {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       min-height: 0;
-      padding-top: 0;
+      padding: 0;
+      max-width: none;
+      width: auto;
+      pointer-events: auto;
     }
 
-    .nav-logo {
-      position: static;
-      transform: none;
+    /* Desktop: logo hidden in pill nav */
+    .nav-logo,
+    .nav-inner.has-logo .nav-logo {
+      display: none;
     }
-    .nav-logo img { height: 56px; }
 
     .nav-toggle { display: none; }
 
@@ -417,9 +431,6 @@ const isHome = Astro.url.pathname === "/";
     };
     toggle.addEventListener('click', () => {
       setOpen(!menu.classList.contains('open'));
-    });
-    menu.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => setOpen(false));
     });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && menu.classList.contains('open')) setOpen(false);
