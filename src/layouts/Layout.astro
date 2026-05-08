@@ -173,6 +173,11 @@ const isHome = Astro.url.pathname === "/";
     position: relative;
     min-height: clamp(200px, 38dvh, 340px);
     padding-top: env(safe-area-inset-top);
+    pointer-events: none;
+  }
+  .nav-inner .nav-toggle,
+  .nav-inner .nav-links {
+    pointer-events: auto;
   }
 
   .nav-logo {
@@ -187,6 +192,11 @@ const isHome = Astro.url.pathname === "/";
     width: auto;
     display: block;
     mix-blend-mode: screen;
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   /* Hamburger — fixed to top-right on mobile so it's always tappable */
