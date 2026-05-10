@@ -3,6 +3,12 @@ import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="Shlomo Hecht — Professional Keyboardist">
 
+  <!-- Mark hero as animated BEFORE paint so the initial state is hidden.
+       If JS is disabled, this never runs and content shows normally. -->
+  <script is:inline>
+    document.documentElement.classList.add('hero-anim');
+  </script>
+
   <!-- ░░ HERO ░░ -->
   <section class="hero">
     <div class="video-wrap">
@@ -19,7 +25,10 @@ import Layout from '../layouts/Layout.astro';
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <p class="hero-eyebrow">Live Performance</p>
-      <h1>Music that<br /><em>moves people</em></h1>
+      <h1>
+        <span class="hero-line"><span class="hero-line-inner"><span class="hero-word">Music</span>&nbsp;<span class="hero-word">that</span></span></span>
+        <span class="hero-line"><span class="hero-line-inner"><em>moves people</em></span></span>
+      </h1>
       <p class="hero-tagline">
         Live keyboard performance for weddings, bar mitzvahs &amp; corporate events
       </p>
@@ -226,6 +235,28 @@ import Layout from '../layouts/Layout.astro';
     line-height: 0.92;
     margin-bottom: 1.5rem;
     color: var(--text);
+  }
+  .hero-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.05em;
+  }
+  .hero-line-inner {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+  .hero-word {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+
+  /* Hide hero pieces before GSAP runs (only when JS-anim class is set
+     by inline script so no-JS users still see the content). */
+  html.hero-anim .hero-eyebrow,
+  html.hero-anim .hero-tagline,
+  html.hero-anim .hero-content .btn-gold,
+  html.hero-anim .hero-line-inner {
+    opacity: 0;
   }
 
   .hero-tagline {
@@ -451,6 +482,78 @@ import Layout from '../layouts/Layout.astro';
 </style>
 
 <script>
+  // ── HERO ENTRANCE ANIMATION (GSAP) ─────────────────────
+  import { gsap } from 'gsap';
+
+  const eyebrow = document.querySelector<HTMLElement>('.hero-eyebrow');
+  const lines = document.querySelectorAll<HTMLElement>('.hero-line-inner');
+  const tagline = document.querySelector<HTMLElement>('.hero-tagline');
+  const button = document.querySelector<HTMLElement>('.hero-content .btn-gold');
+
+  const runAnim = () => {
+    const line1 = lines[0];
+    const line2 = lines[1];
+    const words = Array.from(document.querySelectorAll<HTMLElement>('.hero-word'));
+
+    if (words.length < 2) return;
+
+    // Allow line 1 to overflow while words scale during the pop.
+    if (line1.parentElement) {
+      gsap.set(line1.parentElement, { overflow: 'visible' });
+    }
+
+    gsap.set(eyebrow, { opacity: 0, y: 14 });
+    gsap.set(words, {
+      opacity: 0,
+      scale: 0.35,
+      transformOrigin: 'center center',
+    });
+    gsap.set(line2, { yPercent: 110 });
+    gsap.set(tagline, { opacity: 0, y: 14 });
+    gsap.set(button, { opacity: 0, y: 12 });
+    document.documentElement.classList.remove('hero-anim');
+
+    const tl = gsap.timeline();
+    tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 0.1)
+      .to(words[0], {
+        opacity: 1,
+        scale: 1,
+        duration: 1.3,
+        ease: 'elastic.out(1.1, 0.5)',
+      }, 0.35)
+      .to(words[1], {
+        opacity: 1,
+        scale: 1,
+        duration: 1.3,
+        ease: 'elastic.out(1.1, 0.5)',
+      }, 0.6)
+      .to(line2, { yPercent: 0, duration: 0.95, ease: 'power3.out' }, 1.5)
+      .to(tagline, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 2.2)
+      .to(button, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 3.2)
+      // After a pause, fade out the text — only the nav logo and button
+      // (and video) remain.
+      .to([eyebrow, words[0], words[1], line2, tagline], {
+        opacity: 0,
+        duration: 1.1,
+        ease: 'power2.inOut',
+        stagger: 0.08,
+      }, 5.4);
+  };
+
+  // Wait for fonts so layout-sensitive measurements are stable.
+  const start = () => {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(runAnim);
+    } else {
+      runAnim();
+    }
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+
   const vids = Array.from(document.querySelectorAll<HTMLVideoElement>('.hero-vid'));
 
   // Try to start playback on all videos (iOS Low Power Mode blocks autoplay)
@@ -480,29 +583,32 @@ import Layout from '../layouts/Layout.astro';
     });
     return max * 35;
   })();
-  const animateCount = (el: HTMLElement) => {
+  const animateCount = (el: HTMLElement, startTime: number) => {
     const target = parseInt(el.dataset.countTo || '0', 10);
     const suffix = el.dataset.suffix || '';
-    const msPerStep = totalDuration / target;
-    let current = 0;
-    const tick = () => {
-      current++;
-      if (current >= target) {
+    const frame = (now: number) => {
+      const progress = Math.min(1, (now - startTime) / totalDuration);
+      const current = Math.floor(progress * target);
+      if (progress >= 1) {
         el.textContent = target + suffix;
       } else {
         el.textContent = String(current);
-        setTimeout(tick, msPerStep);
+        requestAnimationFrame(frame);
       }
     };
-    setTimeout(tick, msPerStep);
+    requestAnimationFrame(frame);
   };
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        animateCount(entry.target as HTMLElement);
-        statObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.4 });
-  statNums.forEach((el) => statObserver.observe(el));
+  const statsContainer = document.querySelector<HTMLElement>('.intro-stats');
+  if (statsContainer) {
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const startTime = performance.now();
+          statNums.forEach((el) => animateCount(el, startTime));
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    statObserver.observe(statsContainer);
+  }
 </script>

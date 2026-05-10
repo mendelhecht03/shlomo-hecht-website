@@ -24,7 +24,11 @@ import Layout from '../layouts/Layout.astro';
     hidden
   >
     <div class="modal">
-      <button class="modal-close" id="close-modal" aria-label="Close dialog">✕</button>
+      <button class="modal-close" id="close-modal" aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
       <p class="section-label">Request</p>
       <h2 id="booking-modal-title">Check a Time Slot</h2>
       <div class="divider"></div>
@@ -131,7 +135,7 @@ import Layout from '../layouts/Layout.astro';
       result.innerHTML = '<p class="result-checking">Checking availability…</p>';
 
       try {
-        const res = await fetch('/.netlify/functions/check-availability', {
+        const res = await fetch('/check-availability', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -264,11 +268,14 @@ import Layout from '../layouts/Layout.astro';
     background: none;
     border: none;
     color: var(--text);
-    font-size: 1.85rem;
-    font-weight: 300;
     cursor: pointer;
-    line-height: 1;
+    padding: 0;
     transition: color 0.2s;
+  }
+  .modal-close svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
   }
 
   @media (hover: hover) {
