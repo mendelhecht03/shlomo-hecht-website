@@ -34,7 +34,7 @@ import Layout from '../layouts/Layout.astro';
       </p>
       <a href="/book" class="btn-gold hero-btn">
         <svg class="hero-btn-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="hero-btn-stroke" d="M 50 0 L 100 0 L 100 100 L 0 100 L 0 0 L 50 0" fill="none" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+          <path class="hero-btn-stroke" d="M 50 0 L 100 0 L 100 100 L 0 100 L 0 0 L 50 0" fill="none" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke" stroke-dasharray="9999" stroke-dashoffset="9999" />
         </svg>
         <span class="hero-btn-label">Check Availability</span>
       </a>
@@ -260,13 +260,9 @@ import Layout from '../layouts/Layout.astro';
   html.hero-anim .hero-line-inner {
     opacity: 0;
   }
+  html.hero-anim .hero-btn { opacity: 0; }
   html.hero-anim .hero-btn-label { opacity: 0; }
-  /* Hide the SVG border before JS computes the real perimeter. A large value
-     guarantees the dash sits entirely off the path regardless of button size. */
-  html.hero-anim .hero-btn-stroke {
-    stroke-dasharray: 9999;
-    stroke-dashoffset: 9999;
-  }
+  html.hero-anim .scroll-line { opacity: 0; }
 
   /* Hero CTA: border is drawn by SVG path so we hide the native border. */
   .hero-content .btn-gold {
@@ -520,6 +516,7 @@ import Layout from '../layouts/Layout.astro';
   const btn = document.querySelector<HTMLElement>('.hero-btn');
   const btnPath = document.querySelector<SVGPathElement>('.hero-btn-stroke');
   const btnLabel = document.querySelector<HTMLElement>('.hero-btn-label');
+  const scrollLine = document.querySelector<HTMLElement>('.scroll-line');
 
   const runAnim = () => {
     const words = Array.from(document.querySelectorAll<HTMLElement>('.hero-word'));
@@ -543,6 +540,7 @@ import Layout from '../layouts/Layout.astro';
     // CSS pixels, not viewBox units, so pathLength normalization is unreliable.
     const btnRect = btn?.getBoundingClientRect();
     const perimeter = btnRect ? 2 * (btnRect.width + btnRect.height) : 600;
+    gsap.set(btn, { opacity: 0 });
     gsap.set(btnPath, {
       strokeDasharray: perimeter,
       strokeDashoffset: perimeter,
@@ -552,6 +550,7 @@ import Layout from '../layouts/Layout.astro';
       scale: 0.35,
       transformOrigin: 'center center',
     });
+    gsap.set(scrollLine, { opacity: 0 });
     document.documentElement.classList.remove('hero-anim');
 
     const wordStart = 0.35;
@@ -566,6 +565,7 @@ import Layout from '../layouts/Layout.astro';
         ease: 'elastic.out(1.1, 0.5)',
         stagger: wordStagger,
       }, wordStart)
+      .set(btn, { opacity: 1 }, lastWordTime + 1.4)
       .to(btnPath, { strokeDashoffset: 0, duration: 1.0, ease: 'power2.inOut' }, lastWordTime + 1.4)
       .to(btnLabel, {
         opacity: 1,
@@ -573,6 +573,11 @@ import Layout from '../layouts/Layout.astro';
         duration: 1.3,
         ease: 'elastic.out(1.1, 0.5)',
       }, lastWordTime + 2.4)
+      .to(scrollLine, {
+        opacity: 1,
+        duration: 0.6,
+        ease: 'power2.out',
+      }, lastWordTime + 3.7)
       // After a pause, fade out the headline words — only the nav logo, button,
       // eyebrow, tagline (and video) remain.
       .to(words, {
