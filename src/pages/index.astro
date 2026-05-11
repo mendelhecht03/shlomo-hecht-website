@@ -588,18 +588,12 @@ import Layout from '../layouts/Layout.astro';
       }, lastWordTime + 4.6);
   };
 
-  // Wait for fonts so layout-sensitive measurements are stable.
-  const start = () => {
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(runAnim);
-    } else {
-      runAnim();
-    }
-  };
+  // Start as soon as the DOM is parsed — don't wait for fonts so the
+  // animation begins immediately on slow networks.
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
+    document.addEventListener('DOMContentLoaded', runAnim, { once: true });
   } else {
-    start();
+    runAnim();
   }
 
   const vids = Array.from(document.querySelectorAll<HTMLVideoElement>('.hero-vid'));
