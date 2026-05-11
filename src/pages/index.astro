@@ -24,15 +24,20 @@ import Layout from '../layouts/Layout.astro';
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <p class="hero-eyebrow">Live Performance</p>
+      <p class="hero-eyebrow">Shlomo Hecht Productions</p>
       <h1>
         <span class="hero-line"><span class="hero-line-inner"><span class="hero-word">Music</span>&nbsp;<span class="hero-word">that</span></span></span>
-        <span class="hero-line"><span class="hero-line-inner"><em>moves people</em></span></span>
+        <span class="hero-line"><span class="hero-line-inner"><em><span class="hero-word">moves</span>&nbsp;<span class="hero-word">people</span></em></span></span>
       </h1>
       <p class="hero-tagline">
         Live keyboard performance for weddings, bar mitzvahs &amp; corporate events
       </p>
-      <a href="/book" class="btn-gold">Check Availability</a>
+      <a href="/book" class="btn-gold hero-btn">
+        <svg class="hero-btn-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path class="hero-btn-stroke" d="M 50 0 L 100 0 L 100 100 L 0 100 L 0 0 L 50 0" fill="none" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+        </svg>
+        <span class="hero-btn-label">Check Availability</span>
+      </a>
     </div>
     <div class="scroll-line"><span></span></div>
   </section>
@@ -190,7 +195,7 @@ import Layout from '../layouts/Layout.astro';
 
   .hero-eyebrow {
     font-size: 0.68rem;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--gold);
     margin-bottom: 1.25rem;
@@ -252,11 +257,37 @@ import Layout from '../layouts/Layout.astro';
 
   /* Hide hero pieces before GSAP runs (only when JS-anim class is set
      by inline script so no-JS users still see the content). */
-  html.hero-anim .hero-eyebrow,
-  html.hero-anim .hero-tagline,
-  html.hero-anim .hero-content .btn-gold,
   html.hero-anim .hero-line-inner {
     opacity: 0;
+  }
+  html.hero-anim .hero-btn-label { opacity: 0; }
+  /* Hide the SVG border before JS computes the real perimeter. A large value
+     guarantees the dash sits entirely off the path regardless of button size. */
+  html.hero-anim .hero-btn-stroke {
+    stroke-dasharray: 9999;
+    stroke-dashoffset: 9999;
+  }
+
+  /* Hero CTA: border is drawn by SVG path so we hide the native border. */
+  .hero-content .btn-gold {
+    border-color: transparent;
+    overflow: visible;
+  }
+  .hero-btn-border {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .hero-btn-stroke {
+    stroke: var(--gold);
+  }
+  .hero-btn-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
   }
 
   .hero-tagline {
@@ -485,59 +516,71 @@ import Layout from '../layouts/Layout.astro';
   // ── HERO ENTRANCE ANIMATION (GSAP) ─────────────────────
   import { gsap } from 'gsap';
 
-  const eyebrow = document.querySelector<HTMLElement>('.hero-eyebrow');
   const lines = document.querySelectorAll<HTMLElement>('.hero-line-inner');
-  const tagline = document.querySelector<HTMLElement>('.hero-tagline');
-  const button = document.querySelector<HTMLElement>('.hero-content .btn-gold');
+  const btn = document.querySelector<HTMLElement>('.hero-btn');
+  const btnPath = document.querySelector<SVGPathElement>('.hero-btn-stroke');
+  const btnLabel = document.querySelector<HTMLElement>('.hero-btn-label');
 
   const runAnim = () => {
-    const line1 = lines[0];
-    const line2 = lines[1];
     const words = Array.from(document.querySelectorAll<HTMLElement>('.hero-word'));
 
-    if (words.length < 2) return;
+    if (words.length < 4) return;
 
-    // Allow line 1 to overflow while words scale during the pop.
-    if (line1.parentElement) {
-      gsap.set(line1.parentElement, { overflow: 'visible' });
-    }
+    // Allow lines to overflow while words scale during the pop.
+    lines.forEach((line) => {
+      if (line.parentElement) {
+        gsap.set(line.parentElement, { overflow: 'visible' });
+      }
+    });
 
-    gsap.set(eyebrow, { opacity: 0, y: 14 });
     gsap.set(words, {
       opacity: 0,
       scale: 0.35,
       transformOrigin: 'center center',
     });
-    gsap.set(line2, { yPercent: 110 });
-    gsap.set(tagline, { opacity: 0, y: 14 });
-    gsap.set(button, { opacity: 0, y: 12 });
+    // Compute the rendered button perimeter (in CSS pixels). With
+    // vector-effect="non-scaling-stroke" the dasharray is measured in
+    // CSS pixels, not viewBox units, so pathLength normalization is unreliable.
+    const btnRect = btn?.getBoundingClientRect();
+    const perimeter = btnRect ? 2 * (btnRect.width + btnRect.height) : 600;
+    gsap.set(btnPath, {
+      strokeDasharray: perimeter,
+      strokeDashoffset: perimeter,
+    });
+    gsap.set(btnLabel, {
+      opacity: 0,
+      scale: 0.35,
+      transformOrigin: 'center center',
+    });
     document.documentElement.classList.remove('hero-anim');
 
+    const wordStart = 0.35;
+    const wordStagger = 0.36;
+    const lastWordTime = wordStart + wordStagger * (words.length - 1);
+
     const tl = gsap.timeline();
-    tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 0.1)
-      .to(words[0], {
+    tl.to(words, {
         opacity: 1,
         scale: 1,
         duration: 1.3,
         ease: 'elastic.out(1.1, 0.5)',
-      }, 0.35)
-      .to(words[1], {
+        stagger: wordStagger,
+      }, wordStart)
+      .to(btnPath, { strokeDashoffset: 0, duration: 1.0, ease: 'power2.inOut' }, lastWordTime + 1.4)
+      .to(btnLabel, {
         opacity: 1,
         scale: 1,
         duration: 1.3,
         ease: 'elastic.out(1.1, 0.5)',
-      }, 0.6)
-      .to(line2, { yPercent: 0, duration: 0.95, ease: 'power3.out' }, 1.5)
-      .to(tagline, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 2.2)
-      .to(button, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 3.2)
-      // After a pause, fade out the text — only the nav logo and button
-      // (and video) remain.
-      .to([eyebrow, words[0], words[1], line2, tagline], {
+      }, lastWordTime + 2.4)
+      // After a pause, fade out the headline words — only the nav logo, button,
+      // eyebrow, tagline (and video) remain.
+      .to(words, {
         opacity: 0,
         duration: 1.1,
         ease: 'power2.inOut',
         stagger: 0.08,
-      }, 5.4);
+      }, lastWordTime + 4.6);
   };
 
   // Wait for fonts so layout-sensitive measurements are stable.
